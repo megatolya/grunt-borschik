@@ -39,6 +39,7 @@
   ],
   "dependencies": {
     "q": "~0.9.4",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "borschik": "0.3.x"
   }
 }
