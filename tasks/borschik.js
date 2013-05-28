@@ -6,45 +6,50 @@
  * Licensed under the MIT license.
  */
 
-'use strict';
+"use strict";
 
-module.exports = function(grunt) {
+function extend (a, b) { for (var x in b) {a[x] = b[x]; return a; } }
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+module.exports = function (grunt) {
+    var borschik = require('borschik').api,
+        path = require('path'),
+        async = require('async'),
+        Q = require('q');
 
-  grunt.registerMultiTask('borschik', 'Your task description goes here.', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
+    grunt.registerMultiTask('borschik', 'Your task description goes here.', function() {
+        var options = this.options({
+                filePrefix: '_'
+            }),
+            promises = [],
+            done = this.async(),
+            tasks = [];
+
+        this.files.forEach(function (f) {
+            f.src.filter(function (filepath) {
+                var outputPath = path.join(
+                    path.dirname(filepath),
+                    (options.filePrefix + path.basename(filepath))
+                );
+
+                (function (filePath) {
+                    tasks.push(function (callback) {
+                        borschik(extend(options, {
+                            input: filePath,
+                            output: outputPath
+                        })).then(function () {
+                            callback(null);
+                        }).fail(function (err) {
+                            callback(err);
+                        });
+                    });
+                })(filepath);
+            });
+        });
+        async.series(tasks, function () {
+            console.log('done');
+            done();
+        });
+
     });
-
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
-
-      // Handle options.
-      src += options.punctuation;
-
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
-  });
 
 };
