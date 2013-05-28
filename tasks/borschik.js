@@ -8,7 +8,7 @@
 
 "use strict";
 
-function extend (a, b) { for (var x in b) {a[x] = b[x]; return a; } }
+function extend (a, b) { for (var x in b) {a[x] = b[x];  } return a; }
 
 module.exports = function (grunt) {
     var borschik = require('borschik').api,
@@ -25,28 +25,29 @@ module.exports = function (grunt) {
             tasks = [];
 
         this.files.forEach(function (f) {
-            f.src.filter(function (filepath) {
+            f.src.filter(function (filePath) {
                 var outputPath = path.join(
-                    path.dirname(filepath),
-                    (options.filePrefix + path.basename(filepath))
-                );
-
-                (function (filePath) {
-                    tasks.push(function (callback) {
-                        borschik(extend(options, {
-                            input: filePath,
-                            output: outputPath
-                        })).then(function () {
-                            callback(null);
-                        }).fail(function (err) {
-                            callback(err);
-                        });
+                        path.dirname(filePath),
+                        (options.filePrefix + path.basename(filePath))
+                    ),
+                    borschikOpts = extend(options, {
+                        input: filePath,
+                        output: outputPath
                     });
-                })(filepath);
+
+                tasks.push(function (callback) {
+                    borschik(extend({}, borschikOpts)).then(function () {
+                        callback(null);
+                    }).fail(function (err) {
+                        callback(err);
+                    });
+                    grunt.log.writeln('Done for file ' + outputPath);
+                });
             });
         });
-        async.series(tasks, function () {
-            console.log('done');
+        async.series(tasks, function (err) {
+            if (err)
+                return grunt.log.error(err);
             done();
         });
 
