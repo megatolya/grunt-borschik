@@ -1,7 +1,7 @@
 {
   "name": "grunt-borschik",
   "description": "extendable builder for text-based file  formats",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/megatolya/grunt-borschik",
   "author": {
     "name": "Anatoliy Ostrovskiy",
