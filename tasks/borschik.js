@@ -30,18 +30,19 @@ module.exports = function (grunt) {
                         path.dirname(filePath),
                         (options.filePrefix + path.basename(filePath))
                     ),
-                    borschikOpts = extend(options, {
+                    _opts = extend({}, options),
+                    opts = extend(_opts, {
                         input: filePath,
                         output: outputPath
                     });
 
                 tasks.push(function (callback) {
-                    borschik(extend({}, borschikOpts)).then(function () {
+                    borschik(extend({}, opts)).then(function () {
+                        grunt.log.write(outputPath + '...').ok();
                         callback(null);
                     }).fail(function (err) {
                         callback(err);
                     });
-                    grunt.log.writeln('Done for file ' + outputPath);
                 });
             });
         });
