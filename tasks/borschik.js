@@ -37,11 +37,11 @@ module.exports = function (grunt) {
 
                 tasks.push(function (callback) {
                     borschik(extend({}, borschikOpts)).then(function () {
+                        grunt.log.write(outputPath + '...').ok();
                         callback(null);
                     }).fail(function (err) {
                         callback(err);
                     });
-                    grunt.log.writeln('Done for file ' + outputPath);
                 });
             });
         });
