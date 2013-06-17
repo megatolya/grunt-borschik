@@ -1,6 +1,6 @@
 # grunt-borschik
 
-> extendable builder for text-based file  formats
+> Extendable builder for text-based file  formats
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
@@ -37,7 +37,13 @@ grunt.initConfig({
             src: ['pages-desktop/common/common.ie**.css'],
             options: {
                 minimize: true,
-                tech: './techs/css-fast'
+                tech: './techs/css-fast',
+                beforeBuild: function() {
+                    console.log('it will be in console before all imports');
+                },
+                afterBuild: function() {
+                    console.log('it will be in console after all imports');
+                }
             }
         }
     }

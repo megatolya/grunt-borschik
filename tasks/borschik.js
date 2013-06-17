@@ -16,14 +16,17 @@ module.exports = function (grunt) {
         async = require('async'),
         Q = require('q');
 
-    grunt.registerMultiTask('borschik', 'Your task description goes here.', function() {
+    grunt.registerMultiTask('borschik', 'Implements original borschik functionality.', function() {
         var options = this.options({
-                filePrefix: '_'
+                filePrefix: '_',
+                beforeBuild: function() {},
+                afterBuild: function() {}
             }),
             promises = [],
             done = this.async(),
             tasks = [];
 
+        options.beforeBuild();
         this.files.forEach(function (f) {
             f.src.filter(function (filePath) {
                 var outputPath = path.join(
@@ -49,6 +52,8 @@ module.exports = function (grunt) {
         async.series(tasks, function (err) {
             if (err)
                 return grunt.log.error(err);
+
+            options.afterBuild();
             done();
         });
 
