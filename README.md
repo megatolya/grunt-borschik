@@ -45,6 +45,13 @@ grunt.initConfig({
                     console.log('it will be in console after all imports');
                 }
             }
+        },
+        chrome: {
+            src: ['pages-desktop/common/common.ch.css'],
+            dest: ['pages-desktop/common/common.min.css'],
+            options: {
+                minimize: false
+            }
         }
     }
 })

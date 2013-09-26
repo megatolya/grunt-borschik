@@ -27,9 +27,9 @@ module.exports = function (grunt) {
             tasks = [];
 
         options.beforeBuild();
-        this.files.forEach(function (f) {
-            f.src.filter(function (filePath) {
-                var outputPath = path.join(
+        this.files.forEach(function (file) {
+            file.src.filter(function (filePath) {
+                var outputPath = file.dest ? file.dest : path.join(
                         path.dirname(filePath),
                         (options.filePrefix + path.basename(filePath))
                     ),
