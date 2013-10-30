@@ -13,8 +13,7 @@ function extend (a, b) { for (var x in b) {a[x] = b[x];  } return a; }
 module.exports = function (grunt) {
     var borschik = require('borschik').api,
         path = require('path'),
-        async = require('async'),
-        Q = require('q');
+        Vow = require('vow');
 
     grunt.registerMultiTask('borschik', 'Implements original borschik functionality.', function() {
         var options = this.options({
@@ -23,12 +22,13 @@ module.exports = function (grunt) {
                 afterBuild: function() {}
             }),
             promises = [],
-            done = this.async(),
-            tasks = [];
+            done = this.async();
 
         options.beforeBuild();
+        var promise;
         this.files.forEach(function (file) {
             file.src.filter(function (filePath) {
+
                 var outputPath = file.dest ? file.dest : path.join(
                         path.dirname(filePath),
                         (options.filePrefix + path.basename(filePath))
@@ -39,22 +39,17 @@ module.exports = function (grunt) {
                         output: outputPath
                     });
 
-                tasks.push(function (callback) {
-                    borschik(extend({}, opts)).then(function () {
-                        grunt.log.write(outputPath + '...').ok();
-                        callback(null);
-                    }).fail(function (err) {
-                        callback(err);
-                    });
-                });
+                grunt.log.writeln(filePath);
+                promises.push(borschik(extend({}, opts)));
             });
         });
-        async.series(tasks, function (err) {
-            if (err)
-                return grunt.log.error(err);
 
-            options.afterBuild();
+        Vow.all(promises).then(function() {
+            options.afterBuild(null);
             done();
+        }).fail(function(err) {
+            options.afterBuild(err);
+            grunt.fail.warn(err);
         });
 
     });

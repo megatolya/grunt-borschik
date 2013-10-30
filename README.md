@@ -41,8 +41,9 @@ grunt.initConfig({
                 beforeBuild: function() {
                     console.log('it will be in console before all imports');
                 },
-                afterBuild: function() {
-                    console.log('it will be in console after all imports');
+                afterBuild: function(err) {
+                    // err can be Error or null
+                    !err && console.log('it will be in consoled if succeed');
                 }
             }
         },
@@ -56,6 +57,3 @@ grunt.initConfig({
     }
 })
 ```
-
-
-
