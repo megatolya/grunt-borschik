@@ -13,7 +13,7 @@ function extend (a, b) { for (var x in b) {a[x] = b[x];  } return a; }
 module.exports = function (grunt) {
     var borschik = require('borschik').api,
         path = require('path'),
-        Vow = require('vow');
+        q = require('q');
 
     grunt.registerMultiTask('borschik', 'Implements original borschik functionality.', function() {
         var options = this.options({
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
             });
         });
 
-        Vow.all(promises).then(function() {
+        q.all(promises).then(function() {
             options.afterBuild(null);
             done();
         }).fail(function(err) {
