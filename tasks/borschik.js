@@ -25,7 +25,6 @@ module.exports = function (grunt) {
             done = this.async();
 
         options.beforeBuild();
-        var promise;
         this.files.forEach(function (file) {
             file.src.filter(function (filePath) {
 
@@ -38,6 +37,10 @@ module.exports = function (grunt) {
                         input: filePath,
                         output: outputPath
                     });
+                    
+                if (file.dest && !grunt.file.exists(path.dirname(outputPath))) {
+                    grunt.file.mkdir(path.dirname(outputPath));
+                }
 
                 grunt.log.writeln(filePath);
                 promises.push(borschik(extend({}, opts)));
